@@ -31,7 +31,6 @@
     "pretty-quick": "^2.0.1",
     "rimraf": "^3.0.2",
     "tsc-watch": "^4.2.5",
-    "tsconfig-paths": "^3.9.0",
     "typescript": "^3.9.2"
   },
   "husky": {
@@ -43,6 +42,7 @@
     "node": ">=14.2.0 <15.0.0"
   },
   "dependencies": {
-    "dotenv": "^8.2.0"
+    "dotenv": "^8.2.0",
+    "tsconfig-paths": "^3.9.0"
   }
 }
