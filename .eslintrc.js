@@ -24,6 +24,7 @@ module.exports = {
     'brace-style': [WARN, '1tbs', { allowSingleLine: false }],
     'arrow-body-style': [ERROR, 'always'],
     '@typescript-eslint/no-unused-vars-experimental': ERROR,
+    '@typescript-eslint/no-dupe-class-members': ['error'],
     'no-unused-vars': OFF,
   },
 };

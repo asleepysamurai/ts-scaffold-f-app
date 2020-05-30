@@ -2,23 +2,14 @@
   "name": "base",
   "version": "0.0.1",
   "description": "Scaffolding for a basic Typescript poject",
-  "main": "dist/src/index.js",
+  "main": "dist/src/index.html",
   "repository": "git@github.com:asleepysamurai/ts-scaffold-base.git",
   "author": "Balaganesh Damodaran <asleepysamurai@gmail.com>",
   "license": "UNLICENSED",
   "private": true,
   "scripts": {
     "x": " ",
-    "prep": "rimraf dist && mkdir -p dist && cp tsconfig.json ./dist && cp -r config ./dist/",
-    "build:run": "tsc && yarn run:standard",
-    "build:watch:run": "tsc-watch --noClear --onSuccess \"yarn run:inspect\"",
-    "build:watch:run-brk": "tsc-watch --noClear --onSuccess \"yarn run:inspect-brk\"",
-    "run:standard": "cd dist && env NODE_ENV=development node -r tsconfig-paths/register ./src/index.js",
-    "run:inspect": "cd dist && env NODE_ENV=development node --inspect -r tsconfig-paths/register ./src/index.js",
-    "run:inspect-brk": "cd dist && env NODE_ENV=development node --inspect-brk -r tsconfig-paths/register ./src/index.js",
-    "start": "yarn prep && yarn build:run",
-    "start:inspect": "yarn prep && yarn build:watch:run",
-    "start:inspect-brk": "yarn prep && yarn build:watch:run-brk"
+    "start": "pwd && parcel --no-autoinstall ./src/index.html"
   },
   "devDependencies": {
     "@types/node": "^14.0.1",
@@ -27,10 +18,9 @@
     "eslint": "^6.8.0",
     "eslint-plugin-import": "^2.20.2",
     "husky": "^4.2.5",
+    "parcel-bundler": "^1.12.4",
     "prettier-eslint-cli": "^5.0.0",
     "pretty-quick": "^2.0.1",
-    "rimraf": "^3.0.2",
-    "tsc-watch": "^4.2.5",
     "typescript": "^3.9.2"
   },
   "husky": {
@@ -42,7 +32,6 @@
     "node": ">=14.2.0 <15.0.0"
   },
   "dependencies": {
-    "dotenv": "^8.2.0",
-    "tsconfig-paths": "^3.9.0"
+    "dotenv": "^8.2.0"
   }
 }
