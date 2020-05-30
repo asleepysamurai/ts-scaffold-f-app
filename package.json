@@ -1,15 +1,17 @@
 {
-  "name": "base",
+  "name": "f-app",
   "version": "0.0.1",
-  "description": "Scaffolding for a basic Typescript poject",
-  "main": "dist/src/index.html",
-  "repository": "git@github.com:asleepysamurai/ts-scaffold-base.git",
+  "description": "Scaffolding for a basic Typescript+React frontend poject",
+  "main": "dist/index.html",
+  "repository": "git@github.com:asleepysamurai/ts-scaffold-f-app.git",
   "author": "Balaganesh Damodaran <asleepysamurai@gmail.com>",
   "license": "UNLICENSED",
   "private": true,
   "scripts": {
     "x": " ",
-    "start": "pwd && parcel --no-autoinstall ./src/index.html"
+    "start": "NODE_ENV=development parcel --no-autoinstall ./src/index.html",
+    "start:inspect": "yarn start",
+    "build": "NODE_ENV=production parcel build --no-autoinstall ./src/index.html"
   },
   "devDependencies": {
     "@types/node": "^14.0.1",
