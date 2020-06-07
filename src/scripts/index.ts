@@ -3,14 +3,14 @@
  */
 
 import { BlueJacket, Context } from 'bluejacket';
-import { getRouteFromLocation, redirectTo, getURLFromRouteAndCurrentLocation } from 'utils/url';
 import { env } from 'utils/environment';
+import { mixins, Mixins } from 'utils/mixins';
 import Debug from 'debug';
 import * as routes from 'routes';
 
 const log = Debug('f-app:index');
 
-const hijackLinks = (router: BlueJacket) => {
+const hijackLinks = (router: BlueJacket<Mixins>) => {
   function route(ev: Event) {
     let node: HTMLAnchorElement = ev.currentTarget as HTMLAnchorElement;
     if (!node) {
@@ -52,29 +52,35 @@ const hijackLinks = (router: BlueJacket) => {
   });
 };
 
-const hijackNavigation = (router: BlueJacket) => {
+const hijackNavigation = (router: BlueJacket<Mixins>) => {
   window.addEventListener('popstate', (event) => {
     router.resolve(
-      getRouteFromLocation(document.location),
+      mixins.getRouteFromLocation(document.location),
       Object.assign({}, event.state, { skipHistoryChange: true }),
     );
   });
 
-  router.handle((context: Context) => {
-    if (context.skipHistoryChange) {
+  router.handle((context: Context<Mixins>) => {
+    if (context.data.skipHistoryChange) {
       return;
     }
 
-    const url = getURLFromRouteAndCurrentLocation(context.route, window.location);
-    history.pushState(context.historyState || {}, '', url);
+    const url = context.getURLFromRouteAndCurrentLocation(context.route, window.location);
+    history.pushState(context.data.historyState || {}, '', url);
   });
 };
 
-const setupDefaultRoute = (router: BlueJacket) => {
-  router.handle('/', redirectTo(env.get('APP_SERVER_DEFAULT_URL')));
+const setupDefaultRoute = (router: BlueJacket<Mixins>) => {
+  router.handle('/', mixins.redirectTo(env.get('APP_SERVER_DEFAULT_URL')));
 };
 
-const initRoutes = async (router: BlueJacket) => {
+const setupComponentRenderer = (router: BlueJacket<Mixins>) => {
+  router.handle((context) => {
+    context.render();
+  });
+};
+
+const initRoutes = async (router: BlueJacket<Mixins>) => {
   hijackLinks(router);
   setupDefaultRoute(router);
 
@@ -84,18 +90,20 @@ const initRoutes = async (router: BlueJacket) => {
     }),
   );
 
+  setupComponentRenderer(router);
+
   hijackNavigation(router);
 };
 
 const init = async () => {
-  const router = new BlueJacket({
-    mixins: {},
+  const router = new BlueJacket<Mixins>({
+    mixins,
   });
 
   try {
     await initRoutes(router);
 
-    await router.resolve(getRouteFromLocation(window.location));
+    await router.resolve(mixins.getRouteFromLocation(window.location));
   } catch (err) {
     log(err);
   }
