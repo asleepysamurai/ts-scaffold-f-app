@@ -6,7 +6,7 @@ import { BlueJacket, Context } from 'bluejacket';
 import { env } from 'utils/environment';
 import { mixins, Mixins } from 'utils/mixins';
 import Debug from 'debug';
-import * as routes from 'routes';
+import { routes } from 'routes';
 
 const log = Debug('f-app:index');
 
@@ -56,17 +56,21 @@ const hijackNavigation = (router: BlueJacket<Mixins>) => {
   window.addEventListener('popstate', (event) => {
     router.resolve(
       mixins.getRouteFromLocation(document.location),
-      Object.assign({}, event.state, { skipHistoryChange: true }),
+      Object.assign({}, event.state, { historyChange: 'skip' }),
     );
   });
 
   router.handle((context: Context<Mixins>) => {
-    if (context.data.skipHistoryChange) {
+    if (context.data.historyChange === 'skip') {
       return;
     }
 
     const url = context.getURLFromRouteAndCurrentLocation(context.route, window.location);
-    history.pushState(context.data.historyState || {}, '', url);
+    history[context.data.historyChange === 'replace' ? 'replaceState' : 'pushState'](
+      context.data.historyState || {},
+      '',
+      url,
+    );
   });
 };
 
@@ -85,7 +89,7 @@ const initRoutes = async (router: BlueJacket<Mixins>) => {
   setupDefaultRoute(router);
 
   await Promise.all(
-    Object.values(routes).map((init) => {
+    routes.map((init) => {
       return Promise.resolve(init(router));
     }),
   );
@@ -103,7 +107,9 @@ const init = async () => {
   try {
     await initRoutes(router);
 
-    await router.resolve(mixins.getRouteFromLocation(window.location));
+    await router.resolve(mixins.getRouteFromLocation(window.location), {
+      historyChange: 'replace',
+    });
   } catch (err) {
     log(err);
   }
