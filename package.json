@@ -22,6 +22,7 @@
     "@types/react": "^16.9.35",
     "@types/react-dom": "^16.9.8",
     "@types/reactstrap": "^8.4.2",
+    "@types/superagent": "^4.1.7",
     "@types/webpack": "^4.41.16",
     "@types/webpack-dev-server": "^3.11.0",
     "@typescript-eslint/eslint-plugin": "^2.33.0",
@@ -61,6 +62,7 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "reactstrap": "^8.4.1",
+    "superagent": "^5.2.2",
     "types-from-env": "^1.0.0"
   }
 }
