@@ -23,10 +23,12 @@ const hijackLinks = (router: BlueJacket<Mixins>) => {
     }
 
     let target = node.getAttribute('target');
-    if (!target || ['_self', '_parent', '_top'].includes(target)) {
-      router.resolve(href);
-    } else {
+    if (target && ['_self', '_parent', '_top'].includes(target)) {
       window.open(href);
+    } else if (href.match(/^https?:\/\//)) {
+      window.location.href = href;
+    } else {
+      router.resolve(href);
     }
 
     ev.preventDefault();
