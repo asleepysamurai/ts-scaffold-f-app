@@ -6,7 +6,7 @@ import superagent from 'superagent';
 import { env } from './environment';
 import { ObjectWithDynamicKeys } from 'bluejacket';
 
-class APIError extends Error {
+export class APIError extends Error {
   constructor(message: string, public readonly httpStatusCode: number) {
     super(message);
   }
@@ -26,7 +26,7 @@ class APIClient {
   private buildURL(route: string) {
     return [[this.host, this.port].filter(Boolean).join(':'), this.routePrefix, route]
       .filter(Boolean)
-      .join();
+      .join('');
   }
 
   private async request(
