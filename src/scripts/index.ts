@@ -28,6 +28,7 @@ const hijackLinks = (router: BlueJacket<Mixins>) => {
     } else if (href.match(/^https?:\/\//)) {
       window.location.href = href;
     } else {
+      mixins.forceRefresh();
       router.resolve(href);
     }
 

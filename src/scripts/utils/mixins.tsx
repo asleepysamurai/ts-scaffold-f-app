@@ -9,7 +9,8 @@ import { render } from 'react-dom';
 import Debug from 'debug';
 import { Context, ObjectWithDynamicKeys } from 'bluejacket';
 import { AppRoot } from 'views';
-import * as queryString from 'query-string';
+import queryString from 'query-string';
+import { v4 as uuid } from 'uuid';
 
 const log = Debug('f-app:mixins');
 
@@ -22,6 +23,8 @@ export class Mixins {
   public title: string = '';
   public titleSuffix: string = 'F-App';
   public titlePartsDelimiter: string = ' - ';
+
+  private keySuffix: number = 0;
 
   public addComponent(
     Component: React.FunctionComponent<any> | React.ComponentClass<any, any>,
@@ -42,7 +45,13 @@ export class Mixins {
       index > this.components.length ? this.components.length : index < 0 ? 0 : index;
 
     let applicableProps: PropsWithKey = typeof props === 'string' ? { key: props } : props;
+    applicableProps.key = `${applicableProps.key || uuid()}-${this.keySuffix}`;
+
     this.components.splice(spliceIndex, 0, <Component {...applicableProps} />);
+  }
+
+  public forceRefresh() {
+    ++this.keySuffix;
   }
 
   public render() {
