@@ -13,7 +13,11 @@ type ActionMessage = {
   preventRetry: boolean;
 };
 
-async function onSetPassword(code: string, password: string): Promise<ActionMessage> {
+async function onSubmit(
+  code: string,
+  password: string,
+  isActivation: boolean = false,
+): Promise<ActionMessage> {
   if (!password) {
     return {
       success: false,
@@ -47,6 +51,16 @@ async function onSetPassword(code: string, password: string): Promise<ActionMess
       return setBadCodeErrorMessage();
     }
 
+    if (err.code === 'EEXPIREDCODE') {
+      return {
+        success: false,
+        text: `Unfortunately the link you used has expired. ${
+          isActivation ? 'Account activation' : 'Password reset'
+        } links are only valid for 2 days.`,
+        preventRetry: true,
+      };
+    }
+
     return {
       success: false,
       text: `An unexpected error occurred while trying to set your account password. Please try again, and if the issue persists, contact F-App Support.`,
@@ -57,9 +71,13 @@ async function onSetPassword(code: string, password: string): Promise<ActionMess
 
 type SetPasswordProps = {
   code: string;
+  isActivation?: boolean;
 };
 
-export const SetPassword: React.FunctionComponent<SetPasswordProps> = function SetPassword(props) {
+export const Component: React.FunctionComponent<SetPasswordProps> = function SetPassword({
+  code,
+  isActivation = false,
+}) {
   const [password, setPassword] = useState('');
   const [formDisabled, setFormDisabled] = useState(false);
   const [message, setMessage] = useState({ success: false, text: '', preventRetry: false });
@@ -79,7 +97,7 @@ export const SetPassword: React.FunctionComponent<SetPasswordProps> = function S
             ev.preventDefault();
             setFormDisabled(true);
 
-            const actionMessage = await onSetPassword(props.code, password);
+            const actionMessage = await onSubmit(code, password, isActivation);
             if (!actionMessage.preventRetry) {
               setFormDisabled(false);
             }
@@ -112,9 +130,13 @@ export const SetPassword: React.FunctionComponent<SetPasswordProps> = function S
               <a href="/user/login" className="text-secondary">
                 Click here to login to your account.
               </a>
+            ) : isActivation ? (
+              <a href="/user/resend-activation" className="text-secondary">
+                Click here to resend the account activation code.
+              </a>
             ) : (
               <a href="/user/forgot-password" className="text-secondary">
-                Click here to resend the password reset/account activation code.
+                Click here to resend the password reset code.
               </a>
             )}
           </small>
@@ -124,6 +146,7 @@ export const SetPassword: React.FunctionComponent<SetPasswordProps> = function S
   );
 };
 
-SetPassword.propTypes = {
+Component.propTypes = {
   code: PropTypes.string.isRequired,
+  isActivation: PropTypes.bool,
 };

@@ -4,9 +4,11 @@
 
 import { Context } from 'bluejacket';
 import { Mixins } from 'utils/mixins';
-import { SetPassword } from 'views/user/setPassword';
+import { Component } from 'views/user/setPassword';
 
-export const handle = async (context: Context<Mixins>) => {
-  context.title = 'Set Account Password';
-  context.addComponent(SetPassword, { key: 'setPassword', code: context.data.code });
+export const handle = (isActivation: boolean = false) => {
+  return async (context: Context<Mixins>) => {
+    context.title = isActivation ? 'Activate Your Account' : 'Set Account Password';
+    context.addComponent(Component, { key: 'setPassword', code: context.data.code, isActivation });
+  };
 };

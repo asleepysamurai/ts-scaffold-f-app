@@ -7,7 +7,7 @@ import { Form, FormGroup, Input, Button, Alert } from 'reactstrap';
 import validator from 'validator';
 import { apiClient } from 'utils/apiClient';
 
-async function onSignup(email: string) {
+async function onSubmit(email: string) {
   if (!validator.isEmail(email)) {
     return {
       success: false,
@@ -30,7 +30,7 @@ async function onSignup(email: string) {
   }
 }
 
-export const Signup: React.FunctionComponent = function Signup() {
+export const Component: React.FunctionComponent = function Signup() {
   const [email, setEmail] = useState('');
   const [formDisabled, setFormDisabled] = useState(false);
   const [message, setMessage] = useState({ success: false, text: '' });
@@ -52,7 +52,7 @@ export const Signup: React.FunctionComponent = function Signup() {
             ev.preventDefault();
             setFormDisabled(true);
 
-            const actionMessage = await onSignup(email);
+            const actionMessage = await onSubmit(email);
             setFormDisabled(false);
             setMessage(actionMessage);
           }}
