@@ -40,7 +40,7 @@ async function onSubmit(
   }
 
   try {
-    await apiClient.post('/user/reset-password', { code, password });
+    await apiClient.post('/user/reset-password', { code, password }, { noAuth: true });
     return {
       success: true,
       text: `Your password has been set successfully. You can now use this password to login to your F-App account!`,

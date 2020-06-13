@@ -1,44 +1,49 @@
 /**
- * Signup View
+ * User Forgot Password View
  */
 
 import React, { useState } from 'react';
 import { Form, FormGroup, Input, Button, Alert } from 'reactstrap';
 import validator from 'validator';
 import { apiClient } from 'utils/apiClient';
+import PropTypes from 'prop-types';
 
-async function onSubmit(email: string) {
+async function onSubmit(email: string, isActivation: boolean = false) {
   if (!validator.isEmail(email)) {
     return {
       success: false,
-      text:
-        'The email address you entered is invalid. Please provide a valid email address, in order to get an F-App account.',
+      text: 'The email address you entered is invalid. Please provide a valid email address.',
     };
   }
 
+  const actionText = isActivation ? 'activate your account' : 'reset your password';
+
   try {
-    await apiClient.post('/user', { email }, { noAuth: true });
+    await apiClient.post('/user/forgot-password', { email, isActivation }, { noAuth: true });
     return {
       success: true,
-      text: `An account has been created for you. However, before you can start using it, you need to verify your email address. We have sent an email to ${email} with instructions on how to verify your email address. Please click the link in the email, to verify your email and start using your account.`,
+      text: `We have sent an email to ${email} with instructions on how to ${actionText}. Please follow the steps in the email to complete the process.`,
     };
   } catch (err) {
     return {
       success: false,
-      text: `An unexpected error occurred while trying to create an account for you. Please try again, and if the issue persists, contact F-App Support.`,
+      text: `An unexpected error occurred while trying to ${actionText}. Please try again, and if the issue persists, contact F-App Support.`,
     };
   }
 }
 
-export const Component: React.FunctionComponent = function Signup() {
+export const Component: React.FunctionComponent<{
+  isActivation?: boolean;
+}> = function ForgotPassword({ isActivation = false }) {
   const [email, setEmail] = useState('');
   const [formDisabled, setFormDisabled] = useState(false);
   const [message, setMessage] = useState({ success: false, text: '' });
 
+  const actionText = isActivation ? 'Account Activation' : 'Password Reset';
   return (
     <div className="container flex-container column center text-center">
       <h3 className="font-weight-light">
-        {message.success ? `You're almost there!` : 'Come, Join the Dark Side!'}
+        {message.success ? `You're almost there!` : `Request ${actionText} Email`}
       </h3>
       {message.text ? (
         <Alert color={message.success ? 'success' : 'danger'} className="mt-5">
@@ -68,7 +73,7 @@ export const Component: React.FunctionComponent = function Signup() {
               />
             </FormGroup>
             <FormGroup>
-              <Button color="primary">Signup Now!</Button>
+              <Button color="primary">Request {actionText} Link</Button>
             </FormGroup>
           </fieldset>
         </Form>
@@ -77,11 +82,16 @@ export const Component: React.FunctionComponent = function Signup() {
         <em>
           <small>
             <a href="/user/login" className="text-secondary">
-              Already have an F-App account? Click here to login to your account instead.
+              {isActivation ? 'Already activated your account' : 'Remembered your password'}? Click
+              here to login to your account.
             </a>
           </small>
         </em>
       </p>
     </div>
   );
+};
+
+Component.propTypes = {
+  isActivation: PropTypes.bool,
 };

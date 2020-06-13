@@ -20,6 +20,7 @@ class APIClient {
   private host: string = '';
   private port: string = '';
   private routePrefix: string = '';
+  private authToken: string | null = localStorage.getItem('auth_token');
 
   constructor({ host, port, routePrefix }: { host: string; port: string; routePrefix: string }) {
     this.host = host;
@@ -37,10 +38,15 @@ class APIClient {
     method: 'GET' | 'POST',
     route: string,
     data: ObjectWithDynamicKeys,
+    { noAuth = false }: { noAuth?: boolean },
   ): Promise<ObjectWithDynamicKeys> {
     try {
       const url = this.buildURL(route);
       const request = superagent(method, url);
+
+      if (this.authToken && !noAuth) {
+        request.set('Authorization', this.authToken);
+      }
 
       if (method === 'GET') {
         request.query(data);
@@ -79,12 +85,25 @@ class APIClient {
     }
   }
 
-  get(route: string, query: ObjectWithDynamicKeys): Promise<ObjectWithDynamicKeys> {
-    return this.request('GET', route, query);
+  get(
+    route: string,
+    query: ObjectWithDynamicKeys,
+    options: { noAuth?: boolean } = {},
+  ): Promise<ObjectWithDynamicKeys> {
+    return this.request('GET', route, query, options);
   }
 
-  post(route: string, body: ObjectWithDynamicKeys): Promise<ObjectWithDynamicKeys> {
-    return this.request('POST', route, body);
+  post(
+    route: string,
+    body: ObjectWithDynamicKeys,
+    options: { noAuth?: boolean } = {},
+  ): Promise<ObjectWithDynamicKeys> {
+    return this.request('POST', route, body, options);
+  }
+
+  setAuthToken(authToken: string) {
+    localStorage.setItem('auth_token', authToken);
+    this.authToken = authToken;
   }
 }
 
