@@ -5,56 +5,53 @@
 import React, { useState } from 'react';
 import { Form, FormGroup, Input, Button, Alert } from 'reactstrap';
 import { apiClient } from 'utils/apiClient';
+import PropTypes from 'prop-types';
 
-async function onSetPassword(
-  setMessage: React.Dispatch<
-    React.SetStateAction<{ success: boolean; text: string; preventRetry: boolean }>
-  >,
-  code: string,
-  password: string,
-) {
+type ActionMessage = {
+  success: boolean;
+  text: string;
+  preventRetry: boolean;
+};
+
+async function onSetPassword(code: string, password: string): Promise<ActionMessage> {
   if (!password) {
-    setMessage({
+    return {
       success: false,
       text: 'You need to set a non-empty password, so you can login to your account.',
       preventRetry: false,
-    });
-    return;
+    };
   }
 
   const setBadCodeErrorMessage = () => {
-    setMessage({
+    return {
       success: false,
       text:
         'Uh-oh! Looks like there was something wrong with the link you used to get here. Please make sure you copy-paste the entire link from the email we sent you.',
       preventRetry: true,
-    });
+    };
   };
 
   if (!code) {
-    setBadCodeErrorMessage();
-    return;
+    return setBadCodeErrorMessage();
   }
 
   try {
     await apiClient.post('/user/reset-password', { code, password });
-    setMessage({
+    return {
       success: true,
       text: `Your password has been set successfully. You can now use this password to login to your F-App account!`,
       preventRetry: false,
-    });
-    return;
+    };
   } catch (err) {
     if (err.code === 'EINVALIDCODE') {
-      setBadCodeErrorMessage();
-      return;
+      return setBadCodeErrorMessage();
     }
 
-    setMessage({
+    return {
       success: false,
       text: `An unexpected error occurred while trying to set your account password. Please try again, and if the issue persists, contact F-App Support.`,
       preventRetry: false,
-    });
+    };
   }
 }
 
@@ -64,6 +61,7 @@ type SetPasswordProps = {
 
 export const SetPassword: React.FunctionComponent<SetPasswordProps> = function SetPassword(props) {
   const [password, setPassword] = useState('');
+  const [formDisabled, setFormDisabled] = useState(false);
   const [message, setMessage] = useState({ success: false, text: '', preventRetry: false });
 
   return (
@@ -77,24 +75,34 @@ export const SetPassword: React.FunctionComponent<SetPasswordProps> = function S
       {message.success || message.preventRetry ? null : (
         <Form
           className="offset-md-4 col-md-4 py-5"
-          onSubmit={(ev) => {
+          onSubmit={async (ev) => {
             ev.preventDefault();
-            return onSetPassword(setMessage, props.code, password);
+            setFormDisabled(true);
+
+            const actionMessage = await onSetPassword(props.code, password);
+            if (!actionMessage.preventRetry) {
+              setFormDisabled(false);
+            }
+            setMessage(actionMessage);
           }}
         >
-          <FormGroup>
-            <Input
-              type="password"
-              placeholder="Enter your password"
-              value={password}
-              onChange={(ev) => {
-                return setPassword(ev.currentTarget.value);
-              }}
-            />
-          </FormGroup>
-          <FormGroup>
-            <Button color="primary">Set Password</Button>
-          </FormGroup>
+          <fieldset disabled={formDisabled}>
+            <FormGroup>
+              <Input
+                type="password"
+                placeholder="Enter your password"
+                value={password}
+                onChange={(ev) => {
+                  return setPassword(ev.currentTarget.value);
+                }}
+              />
+            </FormGroup>
+            <FormGroup>
+              <Button type="submit" color="primary">
+                Set Password
+              </Button>
+            </FormGroup>
+          </fieldset>
         </Form>
       )}
       <p>
@@ -114,4 +122,8 @@ export const SetPassword: React.FunctionComponent<SetPasswordProps> = function S
       </p>
     </div>
   );
+};
+
+SetPassword.propTypes = {
+  code: PropTypes.string.isRequired,
 };

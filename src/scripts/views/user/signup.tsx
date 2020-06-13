@@ -7,36 +7,32 @@ import { Form, FormGroup, Input, Button, Alert } from 'reactstrap';
 import validator from 'validator';
 import { apiClient } from 'utils/apiClient';
 
-async function onSignup(
-  setMessage: React.Dispatch<React.SetStateAction<{ success: boolean; text: string }>>,
-  email: string,
-) {
+async function onSignup(email: string) {
   if (!validator.isEmail(email)) {
-    setMessage({
+    return {
       success: false,
       text:
         'The email address you entered is invalid. Please provide a valid email address, in order to get an F-App account.',
-    });
-    return;
+    };
   }
 
   try {
     await apiClient.post('/user', { email });
-    setMessage({
+    return {
       success: true,
       text: `An account has been created for you. However, before you can start using it, you need to verify your email address. We have sent an email to ${email} with instructions on how to verify your email address. Please click the link in the email, to verify your email and start using your account.`,
-    });
-    return;
+    };
   } catch (err) {
-    setMessage({
+    return {
       success: false,
       text: `An unexpected error occurred while trying to create an account for you. Please try again, and if the issue persists, contact F-App Support.`,
-    });
+    };
   }
 }
 
 export const Signup: React.FunctionComponent = function Signup() {
   const [email, setEmail] = useState('');
+  const [formDisabled, setFormDisabled] = useState(false);
   const [message, setMessage] = useState({ success: false, text: '' });
 
   return (
@@ -52,23 +48,29 @@ export const Signup: React.FunctionComponent = function Signup() {
       {message.success ? null : (
         <Form
           className="offset-md-4 col-md-4 py-5"
-          onSubmit={(ev) => {
+          onSubmit={async (ev) => {
             ev.preventDefault();
-            return onSignup(setMessage, email);
+            setFormDisabled(true);
+
+            const actionMessage = await onSignup(email);
+            setFormDisabled(false);
+            setMessage(actionMessage);
           }}
         >
-          <FormGroup>
-            <Input
-              placeholder="Enter your email"
-              value={email}
-              onChange={(ev) => {
-                return setEmail(ev.currentTarget.value);
-              }}
-            />
-          </FormGroup>
-          <FormGroup>
-            <Button color="primary">Signup Now!</Button>
-          </FormGroup>
+          <fieldset disabled={formDisabled}>
+            <FormGroup>
+              <Input
+                placeholder="Enter your email"
+                value={email}
+                onChange={(ev) => {
+                  return setEmail(ev.currentTarget.value);
+                }}
+              />
+            </FormGroup>
+            <FormGroup>
+              <Button color="primary">Signup Now!</Button>
+            </FormGroup>
+          </fieldset>
         </Form>
       )}
       <p>
