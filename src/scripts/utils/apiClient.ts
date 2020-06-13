@@ -7,7 +7,11 @@ import { env } from './environment';
 import { ObjectWithDynamicKeys } from 'bluejacket';
 
 export class APIError extends Error {
-  constructor(message: string, public readonly httpStatusCode: number) {
+  constructor(
+    public readonly code: string,
+    message: string,
+    public readonly httpStatusCode: number,
+  ) {
     super(message);
   }
 }
@@ -49,23 +53,29 @@ class APIClient {
         data: ObjectWithDynamicKeys;
         error: {
           message: string;
+          code: string;
         };
       } = (await request)?.body;
 
       if (response.success) {
         return response?.data || {};
       } else {
-        throw new APIError(response?.error?.message || 'Unknown server error', 500);
+        throw new APIError(
+          response?.error?.code,
+          response?.error?.message || 'Unknown server error',
+          500,
+        );
       }
     } catch (err) {
       if (err.status) {
         throw new APIError(
+          err.response?.body?.error?.code,
           err.response?.body?.error?.message || 'Unknown server error',
           err.status,
         );
       }
 
-      throw new APIError(err.message, -1);
+      throw new APIError('EUNKNOWN', err.message, -1);
     }
   }
 

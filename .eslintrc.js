@@ -29,6 +29,7 @@ module.exports = {
     '@typescript-eslint/no-unused-vars-experimental': ERROR,
     '@typescript-eslint/no-dupe-class-members': ['error'],
     'no-unused-vars': OFF,
+    'no-dupe-class-members': OFF,
   },
   settings: {
     react: {

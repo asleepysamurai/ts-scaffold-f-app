@@ -7,10 +7,13 @@
 import React from 'react';
 import { render } from 'react-dom';
 import Debug from 'debug';
-import { Context } from 'bluejacket';
+import { Context, ObjectWithDynamicKeys } from 'bluejacket';
 import { AppRoot } from 'views';
+import * as queryString from 'query-string';
 
 const log = Debug('f-app:mixins');
+
+type PropsWithKey = { key: string; [key: string]: any };
 
 export class Mixins {
   public components: Array<React.ReactElement> = [];
@@ -23,11 +26,23 @@ export class Mixins {
   public addComponent(
     Component: React.FunctionComponent<any> | React.ComponentClass<any, any>,
     key: string,
+    index?: number,
+  ): void;
+  public addComponent(
+    Component: React.FunctionComponent<any> | React.ComponentClass<any, any>,
+    props: PropsWithKey,
+    index?: number,
+  ): void;
+  public addComponent(
+    Component: React.FunctionComponent<any> | React.ComponentClass<any, any>,
+    props: string | PropsWithKey,
     index: number = Infinity,
-  ) {
+  ): void {
     const spliceIndex =
       index > this.components.length ? this.components.length : index < 0 ? 0 : index;
-    this.components.splice(spliceIndex, 0, <Component key={key} />);
+
+    let applicableProps: PropsWithKey = typeof props === 'string' ? { key: props } : props;
+    this.components.splice(spliceIndex, 0, <Component {...applicableProps} />);
   }
 
   public render() {
@@ -48,6 +63,10 @@ export class Mixins {
 
   public getRouteFromLocation(location: Location): string {
     return location.href.replace(new RegExp(`^${location.origin}`), '');
+  }
+
+  public getQueryFromLocation(location: Location): ObjectWithDynamicKeys {
+    return queryString.parse(location.search);
   }
 
   public getURLFromRouteAndCurrentLocation(route: string, location: Location): string {

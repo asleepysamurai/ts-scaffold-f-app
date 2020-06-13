@@ -35,7 +35,7 @@ async function onSignup(
   }
 }
 
-export const Signup: React.FunctionComponent = () => {
+export const Signup: React.FunctionComponent = function Signup() {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState({ success: false, text: '' });
 

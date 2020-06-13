@@ -109,9 +109,12 @@ const init = async () => {
   try {
     await initRoutes(router);
 
-    await router.resolve(mixins.getRouteFromLocation(window.location), {
-      historyChange: 'replace',
-    });
+    await router.resolve(
+      mixins.getRouteFromLocation(window.location),
+      Object.assign({}, mixins.getQueryFromLocation(window.location), {
+        historyChange: 'replace',
+      }),
+    );
   } catch (err) {
     log(err);
   }
