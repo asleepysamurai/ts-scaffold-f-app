@@ -41,7 +41,6 @@ const config = (env) => {
     plugins: [
       new Dotenv({
         path: path.join(__dirname, 'config', `${env.NODE_ENV}.env`),
-        defaults: path.join(__dirname, 'config', 'default.env'),
         unsafeAllowAllEnvVars: true,
       }),
       new HtmlWebpackPlugin({

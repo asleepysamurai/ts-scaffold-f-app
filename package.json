@@ -9,11 +9,12 @@
   "private": true,
   "scripts": {
     "x": " ",
-    "env:types": "rimraf src/codegen && mkdir -p src/codegen && types-from-env ./config/default.env ./src/codegen/env.types.ts",
-    "prep": "rimraf ./dist && mkdir -p ./dist && yarn env:types",
-    "start": "yarn prep && NODE_ENV=development webpack-dev-server --config webpack.config.js --env.NODE_ENV=development",
+    "env:types:dev": "types-from-env ./config/development.env ./src/codegen/env.types.ts",
+    "env:types:prod": "types-from-env ./config/production.env ./src/codegen/env.types.ts",
+    "prep": "rimraf ./dist && mkdir -p ./dist && rimraf src/codegen && mkdir -p src/codegen",
+    "start": "yarn prep && yarn env:types:dev && NODE_ENV=development webpack-dev-server --config webpack.config.js --env.NODE_ENV=development",
     "start:inspect": "yarn start",
-    "build": "yarn prep && NODE_ENV=production webpack --config webpack.config.js --env.NODE_ENV=production"
+    "build": "yarn prep && yarn env:types:prod && NODE_ENV=production webpack --config webpack.config.js --env.NODE_ENV=production"
   },
   "devDependencies": {
     "@types/debug": "^4.1.5",
@@ -58,6 +59,7 @@
     "bluejacket": "^0.0.11",
     "bootstrap": "^4.5.0",
     "debug": "^4.1.1",
+    "dotenv-webpack": "^1.8.0",
     "prop-types": "^15.7.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
