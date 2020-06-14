@@ -2,8 +2,8 @@
  * User management pages
  */
 
-import { BlueJacket } from 'bluejacket';
-import { mixins, Mixins } from 'utils/mixins';
+import { BlueJacket, Context } from 'bluejacket';
+import { Mixins } from 'utils/mixins';
 
 import { handle as login } from './login';
 import { handle as logout } from './logout';
@@ -12,7 +12,9 @@ import { handle as setPassword } from './setPassword';
 import { handle as forgotPassword } from './forgotPassword';
 
 export const setup = (router: BlueJacket<Mixins>) => {
-  router.handle('/user', mixins.redirectTo('/user/signup'));
+  router.handle('/user', (context: Context<Mixins>) => {
+    return context.redirectTo('/user/signup');
+  });
   router.handle('/user/signup', signup);
 
   router.handle('/user/reset-password', setPassword(false));

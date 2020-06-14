@@ -79,16 +79,15 @@ const hijackNavigation = (router: BlueJacket<Mixins>) => {
 };
 
 const setupDefaultRoute = (router: BlueJacket<Mixins>) => {
-  router.handle(
-    '/',
-    mixins.redirectTo(
+  router.handle('/', (context: Context<Mixins>) => {
+    context.redirectTo(
       env.get(
         apiClient.hasAuthToken
           ? 'APP_SERVER_DEFAULT_LOGGEDIN_URL'
           : 'APP_SERVER_DEFAULT_LOGGEDOUT_URL',
       ),
-    ),
-  );
+    );
+  });
 };
 
 const setupComponentRenderer = (router: BlueJacket<Mixins>) => {

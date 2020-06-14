@@ -32,7 +32,7 @@ async function onSubmit(
     const data = await apiClient.post('/user/login', { email, password }, { noAuth: true });
 
     apiClient.setAuthToken(data.user.token);
-    context.redirectTo('/')(context);
+    context.redirectTo('/');
 
     return {
       success: true,

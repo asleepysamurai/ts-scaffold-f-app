@@ -17,7 +17,7 @@ const logout = async (context: Context<Mixins>) => {
       body:
         'You have been logged out of your F-App account. You will now be redirected to the login page',
       onClosed: () => {
-        return context.redirectTo('/user/login')(context);
+        return context.redirectTo('/user/login');
       },
       footer: {
         cancelButton: { hide: true },
@@ -29,7 +29,7 @@ const logout = async (context: Context<Mixins>) => {
       body:
         'An error occurred while attempting to log you out of your F-App account. Please try again later, and if the issue persists, contact F-App Support',
       onClosed: () => {
-        return context.redirectTo('/')(context);
+        return context.redirectTo('/');
       },
       footer: { cancelButton: { hide: true } },
     });

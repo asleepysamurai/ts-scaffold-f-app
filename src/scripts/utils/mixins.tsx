@@ -82,11 +82,9 @@ export class Mixins {
     return `${location.origin}${route[0] === '/' ? '' : '/'}${route}`;
   }
 
-  public redirectTo(route: string): (context: Context<Mixins>) => void {
-    return (context: Context<Mixins>) => {
-      context.router.resolve(route, context.data);
-      throw 'route';
-    };
+  public redirectTo(this: Context<Mixins>, route: string) {
+    this.router.resolve(route, this.data);
+    throw 'route';
   }
 }
 
