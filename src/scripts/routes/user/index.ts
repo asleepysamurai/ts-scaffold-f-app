@@ -6,6 +6,7 @@ import { BlueJacket } from 'bluejacket';
 import { mixins, Mixins } from 'utils/mixins';
 
 import { handle as login } from './login';
+import { handle as logout } from './logout';
 import { handle as signup } from './signup';
 import { handle as setPassword } from './setPassword';
 import { handle as forgotPassword } from './forgotPassword';
@@ -21,4 +22,5 @@ export const setup = (router: BlueJacket<Mixins>) => {
   router.handle('/user/resend-activation', forgotPassword(true));
 
   router.handle('/user/login', login);
+  router.handle('/user/logout', logout);
 };

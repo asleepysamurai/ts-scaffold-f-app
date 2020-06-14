@@ -4,11 +4,12 @@
 
 import { BlueJacket } from 'bluejacket';
 import { Mixins } from 'utils/mixins';
-import { Header } from 'views/header';
+import { Component } from 'views/header';
+import { apiClient } from 'utils/apiClient';
 
 export const setup = (router: BlueJacket<Mixins>) => {
   router.handle((context) => {
     context.components = []; // Reset components stack for this request
-    context.addComponent(Header, 'header');
+    context.addComponent(Component, { key: 'header', userLoggedIn: apiClient.hasAuthToken });
   });
 };

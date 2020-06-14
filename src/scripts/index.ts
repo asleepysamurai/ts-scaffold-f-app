@@ -7,6 +7,7 @@ import { env } from 'utils/environment';
 import { mixins, Mixins } from 'utils/mixins';
 import Debug from 'debug';
 import { routes } from 'routes';
+import { apiClient } from 'utils/apiClient';
 
 const log = Debug('f-app:index');
 
@@ -78,7 +79,16 @@ const hijackNavigation = (router: BlueJacket<Mixins>) => {
 };
 
 const setupDefaultRoute = (router: BlueJacket<Mixins>) => {
-  router.handle('/', mixins.redirectTo(env.get('APP_SERVER_DEFAULT_URL')));
+  router.handle(
+    '/',
+    mixins.redirectTo(
+      env.get(
+        apiClient.hasAuthToken
+          ? 'APP_SERVER_DEFAULT_LOGGEDIN_URL'
+          : 'APP_SERVER_DEFAULT_LOGGEDOUT_URL',
+      ),
+    ),
+  );
 };
 
 const setupComponentRenderer = (router: BlueJacket<Mixins>) => {

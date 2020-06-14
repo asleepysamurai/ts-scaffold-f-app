@@ -4,7 +4,7 @@
 
 import React from 'react';
 
-export const Footer: React.FunctionComponent = () => {
+export const Component: React.FunctionComponent = function Footer() {
   return (
     <div className="footer text-center container">
       <p>

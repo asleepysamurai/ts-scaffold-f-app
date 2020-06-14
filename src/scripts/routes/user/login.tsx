@@ -9,7 +9,11 @@ import { apiClient } from 'utils/apiClient';
 import validator from 'validator';
 import { ActionResponse } from 'utils/types';
 
-async function onSubmit(email: string, password: string): Promise<ActionResponse> {
+async function onSubmit(
+  context: Context<Mixins>,
+  email: string,
+  password: string,
+): Promise<ActionResponse> {
   if (!validator.isEmail(email)) {
     return {
       success: false,
@@ -28,7 +32,7 @@ async function onSubmit(email: string, password: string): Promise<ActionResponse
     const data = await apiClient.post('/user/login', { email, password }, { noAuth: true });
 
     apiClient.setAuthToken(data.user.token);
-    alert('Logged in');
+    context.redirectTo('/')(context);
 
     return {
       success: true,
@@ -53,6 +57,6 @@ export const handle = async (context: Context<Mixins>) => {
   context.title = 'User Login';
   context.addComponent(Component, {
     key: 'login',
-    onSubmit,
+    onSubmit: onSubmit.bind(null, context),
   });
 };

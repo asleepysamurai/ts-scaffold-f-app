@@ -45,7 +45,7 @@ class APIClient {
       const request = superagent(method, url);
 
       if (this.authToken && !noAuth) {
-        request.set('Authorization', this.authToken);
+        request.set('Authorization', `Bearer ${this.authToken}`);
       }
 
       if (method === 'GET') {
@@ -95,7 +95,7 @@ class APIClient {
 
   post(
     route: string,
-    body: ObjectWithDynamicKeys,
+    body: ObjectWithDynamicKeys = {},
     options: { noAuth?: boolean } = {},
   ): Promise<ObjectWithDynamicKeys> {
     return this.request('POST', route, body, options);
@@ -104,6 +104,15 @@ class APIClient {
   setAuthToken(authToken: string) {
     localStorage.setItem('auth_token', authToken);
     this.authToken = authToken;
+  }
+
+  unsetAuthToken() {
+    localStorage.removeItem('auth_token');
+    this.authToken = null;
+  }
+
+  get hasAuthToken(): boolean {
+    return !!this.authToken;
   }
 }
 
