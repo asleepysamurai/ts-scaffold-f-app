@@ -4,40 +4,21 @@
 
 import React, { useState } from 'react';
 import { Form, FormGroup, Input, Button, Alert } from 'reactstrap';
-import validator from 'validator';
-import { apiClient } from 'utils/apiClient';
 import PropTypes from 'prop-types';
+import { ActionResponse } from 'utils/types';
 
-async function onSubmit(email: string, isActivation: boolean = false) {
-  if (!validator.isEmail(email)) {
-    return {
-      success: false,
-      text: 'The email address you entered is invalid. Please provide a valid email address.',
-    };
-  }
-
-  const actionText = isActivation ? 'activate your account' : 'reset your password';
-
-  try {
-    await apiClient.post('/user/forgot-password', { email, isActivation }, { noAuth: true });
-    return {
-      success: true,
-      text: `We have sent an email to ${email} with instructions on how to ${actionText}. Please follow the steps in the email to complete the process.`,
-    };
-  } catch (err) {
-    return {
-      success: false,
-      text: `An unexpected error occurred while trying to ${actionText}. Please try again, and if the issue persists, contact F-App Support.`,
-    };
-  }
-}
-
-export const Component: React.FunctionComponent<{
+type Props = {
+  onSubmit: (email: string, isActivation?: boolean) => Promise<ActionResponse>;
   isActivation?: boolean;
-}> = function ForgotPassword({ isActivation = false }) {
+};
+
+export const Component: React.FunctionComponent<Props> = function ForgotPassword({
+  onSubmit,
+  isActivation = false,
+}) {
   const [email, setEmail] = useState('');
   const [formDisabled, setFormDisabled] = useState(false);
-  const [message, setMessage] = useState({ success: false, text: '' });
+  const [message, setMessage] = useState({ success: false, text: '' } as ActionResponse);
 
   const actionText = isActivation ? 'Account Activation' : 'Password Reset';
   return (
@@ -93,5 +74,6 @@ export const Component: React.FunctionComponent<{
 };
 
 Component.propTypes = {
+  onSubmit: PropTypes.func.isRequired,
   isActivation: PropTypes.bool,
 };

@@ -4,63 +4,18 @@
 
 import React, { useState } from 'react';
 import { Form, FormGroup, Input, Button, Alert } from 'reactstrap';
-import { apiClient } from 'utils/apiClient';
-import validator from 'validator';
 import PropTypes from 'prop-types';
+import { ActionResponse } from 'utils/types';
 
-type ActionMessage = {
-  success: boolean;
-  text: string;
+type Props = {
+  onSubmit: (email: string, password: string) => Promise<ActionResponse>;
 };
 
-async function onSubmit(
-  email: string,
-  password: string,
-  onLogin: (token: string) => void,
-): Promise<ActionMessage> {
-  if (!validator.isEmail(email)) {
-    return {
-      success: false,
-      text: 'Please provide a valid email address to login to your F-App account.',
-    };
-  }
-
-  if (!password) {
-    return {
-      success: false,
-      text: 'You need to provide a password to login to your F-App account.',
-    };
-  }
-
-  try {
-    const data = await apiClient.post('/user/login', { email, password }, { noAuth: true });
-    onLogin(data.user?.token);
-    return {
-      success: true,
-      text: `Login Okay!`,
-    };
-  } catch (err) {
-    if (err.code === 'EBADCREDENTIALS') {
-      return {
-        success: false,
-        text: `The email or password you entered is incorrect. Please double check and try again.`,
-      };
-    }
-
-    return {
-      success: false,
-      text: `An unexpected error occurred while trying to login to your account. Please try again, and if the issue persists, contact F-App Support.`,
-    };
-  }
-}
-
-export const Component: React.FunctionComponent<{
-  onLogin: (token: string) => void;
-}> = function Login({ onLogin }) {
+export const Component: React.FunctionComponent<Props> = function Login({ onSubmit }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [formDisabled, setFormDisabled] = useState(false);
-  const [message, setMessage] = useState({ success: false, text: '' });
+  const [message, setMessage] = useState({ success: false, text: '' } as ActionResponse);
 
   return (
     <div className="container flex-container column center text-center">
@@ -77,7 +32,7 @@ export const Component: React.FunctionComponent<{
             ev.preventDefault();
             setFormDisabled(true);
 
-            const actionMessage = await onSubmit(email, password, onLogin);
+            const actionMessage = await onSubmit(email, password);
             if (actionMessage.success) {
               return;
             }
@@ -128,5 +83,5 @@ export const Component: React.FunctionComponent<{
 };
 
 Component.propTypes = {
-  onLogin: PropTypes.func.isRequired,
+  onSubmit: PropTypes.func.isRequired,
 };
