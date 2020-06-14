@@ -82,8 +82,17 @@ export class Mixins {
     return `${location.origin}${route[0] === '/' ? '' : '/'}${route}`;
   }
 
-  public redirectTo(this: Context<Mixins>, route: string) {
-    this.router.resolve(route, this.data);
+  public redirectTo(
+    this: Context<Mixins>,
+    route: string,
+    replaceCurrentHistoryItem: boolean = false,
+  ) {
+    const data = Object.assign(
+      {},
+      this.data,
+      replaceCurrentHistoryItem ? { historyChange: 'replace' } : {},
+    );
+    this.router.resolve(route, data);
     throw 'route';
   }
 }
