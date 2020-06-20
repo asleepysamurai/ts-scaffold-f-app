@@ -9,7 +9,7 @@ import Debug from 'debug';
 import { routes } from 'routes';
 import { apiClient } from 'utils/apiClient';
 
-const log = Debug('f-app:index');
+const log = Debug('app:index');
 
 const hijackLinks = (router: BlueJacket<Mixins>) => {
   function route(ev: Event) {
