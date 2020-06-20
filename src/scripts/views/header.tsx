@@ -5,6 +5,7 @@
 import React from 'react';
 import { Navbar, NavbarBrand, Nav, NavItem, NavLink } from 'reactstrap';
 import PropTypes from 'prop-types';
+import { env } from 'utils/environment';
 
 type Props = {
   userLoggedIn: boolean;
@@ -15,7 +16,7 @@ export const Component: React.FunctionComponent<Props> = function Header({ userL
     <div className="header">
       <Navbar color="dark" dark expand="md">
         <div className="container">
-          <NavbarBrand href="/">F-App</NavbarBrand>
+          <NavbarBrand href="/">{env.get('APP_NAME')}</NavbarBrand>
           <Nav className="ml-auto text-right" navbar>
             {userLoggedIn ? (
               <NavItem key="logout">

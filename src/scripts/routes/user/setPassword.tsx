@@ -7,6 +7,7 @@ import { Mixins } from 'utils/mixins';
 import { Component } from 'views/user/setPassword';
 import { apiClient } from 'utils/apiClient';
 import { ActionResponse } from 'utils/types';
+import { env } from 'utils/environment';
 
 async function onSubmit(
   code: string,
@@ -38,7 +39,9 @@ async function onSubmit(
     await apiClient.post('/user/reset-password', { code, password }, { noAuth: true });
     return {
       success: true,
-      text: `Your password has been set successfully. You can now use this password to login to your F-App account!`,
+      text: `Your password has been set successfully. You can now use this password to login to your ${env.get(
+        'APP_NAME',
+      )} account!`,
       preventRetry: false,
     };
   } catch (err) {
@@ -58,7 +61,9 @@ async function onSubmit(
 
     return {
       success: false,
-      text: `An unexpected error occurred while trying to set your account password. Please try again, and if the issue persists, contact F-App Support.`,
+      text: `An unexpected error occurred while trying to set your account password. Please try again, and if the issue persists, contact ${env.get(
+        'APP_NAME',
+      )} Support.`,
       preventRetry: false,
     };
   }

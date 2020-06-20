@@ -8,13 +8,15 @@ import { Component } from 'views/user/signup';
 import validator from 'validator';
 import { apiClient } from 'utils/apiClient';
 import { ActionResponse } from 'utils/types';
+import { env } from 'utils/environment';
 
 async function onSubmit(email: string): Promise<ActionResponse> {
   if (!validator.isEmail(email)) {
     return {
       success: false,
-      text:
-        'The email address you entered is invalid. Please provide a valid email address, in order to get an F-App account.',
+      text: `The email address you entered is invalid. Please provide a valid email address, in order to get an ${env.get(
+        'APP_NAME',
+      )} account.`,
     };
   }
 
@@ -27,7 +29,9 @@ async function onSubmit(email: string): Promise<ActionResponse> {
   } catch (err) {
     return {
       success: false,
-      text: `An unexpected error occurred while trying to create an account for you. Please try again, and if the issue persists, contact F-App Support.`,
+      text: `An unexpected error occurred while trying to create an account for you. Please try again, and if the issue persists, contact ${env.get(
+        'APP_NAME',
+      )} Support.`,
     };
   }
 }

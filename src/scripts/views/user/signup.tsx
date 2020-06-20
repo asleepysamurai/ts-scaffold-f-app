@@ -6,6 +6,7 @@ import React, { useState } from 'react';
 import { Form, FormGroup, Input, Button, Alert } from 'reactstrap';
 import { ActionResponse } from 'utils/types';
 import PropTypes from 'prop-types';
+import { env } from 'utils/environment';
 
 type Props = {
   onSubmit: (email: string) => Promise<ActionResponse>;
@@ -58,7 +59,8 @@ export const Component: React.FunctionComponent<Props> = function Signup({ onSub
         <em>
           <small>
             <a href="/user/login" className="text-secondary">
-              Already have an F-App account? Click here to login to your account instead.
+              Already have an {env.get('APP_NAME')} account? Click here to login to your account
+              instead.
             </a>
           </small>
         </em>

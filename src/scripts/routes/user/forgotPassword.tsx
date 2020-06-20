@@ -8,6 +8,7 @@ import { Component } from 'views/user/forgotPassword';
 import validator from 'validator';
 import { apiClient } from 'utils/apiClient';
 import { ActionResponse } from 'utils/types';
+import { env } from 'utils/environment';
 
 async function onSubmit(email: string, isActivation: boolean = false): Promise<ActionResponse> {
   if (!validator.isEmail(email)) {
@@ -28,7 +29,9 @@ async function onSubmit(email: string, isActivation: boolean = false): Promise<A
   } catch (err) {
     return {
       success: false,
-      text: `An unexpected error occurred while trying to ${actionText}. Please try again, and if the issue persists, contact F-App Support.`,
+      text: `An unexpected error occurred while trying to ${actionText}. Please try again, and if the issue persists, contact ${env.get(
+        'APP_NAME',
+      )}f Support.`,
     };
   }
 }

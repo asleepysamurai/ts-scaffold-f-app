@@ -8,6 +8,7 @@ import { Component } from 'views/user/login';
 import { apiClient } from 'utils/apiClient';
 import validator from 'validator';
 import { ActionResponse } from 'utils/types';
+import { env } from 'utils/environment';
 
 async function onSubmit(
   context: Context<Mixins>,
@@ -17,14 +18,14 @@ async function onSubmit(
   if (!validator.isEmail(email)) {
     return {
       success: false,
-      text: 'Please provide a valid email address to login to your F-App account.',
+      text: `Please provide a valid email address to login to your ${env.get('APP_NAME')} account.`,
     };
   }
 
   if (!password) {
     return {
       success: false,
-      text: 'You need to provide a password to login to your F-App account.',
+      text: `You need to provide a password to login to your ${env.get('APP_NAME')} account.`,
     };
   }
 
@@ -50,7 +51,9 @@ async function onSubmit(
 
     return {
       success: false,
-      text: `An unexpected error occurred while trying to login to your account. Please try again, and if the issue persists, contact F-App Support.`,
+      text: `An unexpected error occurred while trying to login to your account. Please try again, and if the issue persists, contact ${env.get(
+        'APP_NAME',
+      )} Support.`,
     };
   }
 }

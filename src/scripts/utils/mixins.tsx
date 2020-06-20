@@ -11,8 +11,9 @@ import { Context, ObjectWithDynamicKeys } from 'bluejacket';
 import { AppRoot } from 'views';
 import queryString from 'query-string';
 import { v4 as uuid } from 'uuid';
+import { env } from 'utils/environment';
 
-const log = Debug('f-app:mixins');
+const log = Debug('app:mixins');
 
 type PropsWithKey = { key: string; [key: string]: any };
 
@@ -21,7 +22,7 @@ export class Mixins {
 
   public titlePrefix: string = '';
   public title: string = '';
-  public titleSuffix: string = 'F-App';
+  public titleSuffix: string = env.get('APP_NAME');
   public titlePartsDelimiter: string = ' - ';
 
   private keySuffix: number = 0;
