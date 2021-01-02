@@ -10,8 +10,7 @@ import { env } from 'utils/environment';
 
 const logout = async (context: Context<Mixins>) => {
   try {
-    await apiClient.post('/user/logout');
-    apiClient.unsetAuthToken();
+    await apiClient.logout();
 
     context.addComponent(Modal, {
       key: 'logoutModal',

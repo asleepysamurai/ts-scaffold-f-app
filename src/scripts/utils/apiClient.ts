@@ -101,14 +101,26 @@ class APIClient {
     return this.request('POST', route, body, options);
   }
 
-  setAuthToken(authToken: string) {
+  private setAuthToken(authToken: string) {
     localStorage.setItem('auth_token', authToken);
     this.authToken = authToken;
   }
 
-  unsetAuthToken() {
+  private unsetAuthToken() {
     localStorage.removeItem('auth_token');
     this.authToken = null;
+  }
+
+  async login(email: string, password: string): Promise<void> {
+    const data = await this.post('/user/login', { email, password }, { noAuth: true });
+    this.setAuthToken(data.user.token);
+  }
+
+  async logout(): Promise<void> {
+    if (this.hasAuthToken) {
+      await this.post('/user/logout');
+      this.unsetAuthToken();
+    }
   }
 
   get hasAuthToken(): boolean {

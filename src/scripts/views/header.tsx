@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import { env } from 'utils/environment';
 
 type Props = {
-  userLoggedIn: boolean;
+  userLoggedIn: () => boolean;
 };
 
 export const Component: React.FunctionComponent<Props> = function Header({ userLoggedIn }) {
@@ -18,7 +18,7 @@ export const Component: React.FunctionComponent<Props> = function Header({ userL
         <div className="container">
           <NavbarBrand href="/">{env.get('APP_NAME')}</NavbarBrand>
           <Nav className="ml-auto text-right" navbar>
-            {userLoggedIn ? (
+            {userLoggedIn() ? (
               <NavItem key="logout">
                 <NavLink href="/user/logout">Logout</NavLink>
               </NavItem>
@@ -40,5 +40,5 @@ export const Component: React.FunctionComponent<Props> = function Header({ userL
 };
 
 Component.propTypes = {
-  userLoggedIn: PropTypes.bool.isRequired,
+  userLoggedIn: PropTypes.func.isRequired,
 };

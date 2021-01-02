@@ -71,6 +71,8 @@ async function onSubmit(
 
 export const handle = (isActivation: boolean = false) => {
   return async (context: Context<Mixins>) => {
+    await apiClient.logout();
+
     context.title = isActivation ? 'Activate Your Account' : 'Set Account Password';
     context.addComponent(Component, {
       key: 'setPassword',
