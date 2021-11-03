@@ -70,6 +70,6 @@
     "types-from-env": "^1.0.0",
     "typescript": "^3.9.5",
     "uuid": "^8.1.0",
-    "validator": "^13.0.0"
+    "validator": "^13.7.0"
   }
 }
